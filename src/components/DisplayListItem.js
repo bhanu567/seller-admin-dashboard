@@ -5,7 +5,7 @@ const DisplayListItem = (props) => {
   return (
     <React.Fragment>
       <h1>Products : </h1>
-      {props.items.map((item) => (
+      {Array.from(props.items).map((item) => (
         <DisplayItem
           key={item.ID}
           deleteItemHandler={props.onDeleteItem}

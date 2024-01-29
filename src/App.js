@@ -2,9 +2,16 @@ import InputForm from "./components/InputForm";
 import { useState } from "react";
 import DisplayListItem from "./components/DisplayListItem";
 
+let sumOfAllPrices = 0;
+const list = { ...localStorage };
+const listItem = Object.values(list).map((item) => {
+  sumOfAllPrices += Number(JSON.parse(item).Price);
+  return JSON.parse(item);
+});
 function App() {
-  const [ItemList, setItemList] = useState([]);
-  const [totalExpense, setTotalExpense] = useState(0);
+  const [ItemList, setItemList] = useState(listItem);
+  const [totalExpense, setTotalExpense] = useState(sumOfAllPrices);
+
   const addNewItemHandler = (newItem) => {
     localStorage.setItem(`${newItem.ID}`, JSON.stringify(newItem));
     setTotalExpense(Number(totalExpense) + Number(newItem.Price));
@@ -13,19 +20,15 @@ function App() {
     });
   };
   const deleteItemHandler = (ID) => {
-    let PriceTobeReduced=0;
-    localStorage.removeItem(ID);
-    for (let index = 0; index < ItemList.length; index++) {
-      if (ItemList[index].ID===ID) {
-        PriceTobeReduced=ItemList[index].Price;
-      };
-      
-    }
-    setItemList((prevItemList) => {
-      const UpdatedItem = prevItemList.filter((item) => item.ID !== ID);
-      return UpdatedItem;
+    let PriceTobeReduced = 0;
+
+    const UpdatedItem = ItemList.filter((item) => {
+      if (item.ID === ID) PriceTobeReduced = item.Price;
+      return item.ID !== ID;
     });
-    setItemList(Number(totalExpense)-Number(PriceTobeReduced));
+    localStorage.removeItem(ID);
+    setItemList(UpdatedItem);
+    setTotalExpense(Number(totalExpense) - Number(PriceTobeReduced));
   };
   return (
     <div>
